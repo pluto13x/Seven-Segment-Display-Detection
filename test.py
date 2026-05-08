@@ -10,17 +10,13 @@ b = img[:, :, 0]
 g = img[:, :, 1]
 r = img[:, :, 2]
 
-# Detect glowing red pixels
-red_mask = (r > 200) & (g < 80) & (b < 80)
-
-# Detect glowing green pixels
-green_mask = (g > 200) & (r < 80) & (b < 80)
-
-# Detect glowing blue pixels
-blue_mask = (b > 200) & (r < 80) & (g < 80)
+# Detect glowing pixels
+red_mask = (r > 200) and (g < 80) and (b < 80)
+green_mask = (g > 200) and (r < 80) and (b < 80)
+blue_mask = (b > 200) and (r < 80) and (g < 80)
 
 # Combine all masks
-led_mask = red_mask | green_mask | blue_mask
+led_mask = red_mask or green_mask or blue_mask
 
 # Convert boolean masks to uint8 images
 red_img = red_mask.astype(np.uint8) * 255
