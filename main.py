@@ -48,7 +48,7 @@ for filename in os.listdir(folder): #load images
         angle = angle + 90
 
     #rotate image and make canvas bigger to fit rotated image   
-    height_img, width_img = img.shape[:2]
+    height_img, width_img = led_img.shape[:2]
     center = (width_img // 2, height_img // 2)
     rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
     cos = abs(rotation_matrix[0, 0])
@@ -58,25 +58,13 @@ for filename in os.listdir(folder): #load images
     rotation_matrix[0, 2] += (new_width / 2) - center[0]
     rotation_matrix[1, 2] += (new_height / 2) - center[1]
     rotated = cv2.warpAffine(
-        img,
+        led_img,
         rotation_matrix,
         (new_width, new_height)
     )
 
-    #find mask again on rotated image
-    b = rotated[:, :, 0]
-    g = rotated[:, :, 1]
-    r = rotated[:, :, 2]
-
-    red_mask = (r > 160) & (g < 80) & (b < 80)
-    green_mask = (g > 80) & (r < 80) & (b < 80)
-    blue_mask = (b > 180) & (r < 80) & (g < 80)
-
-    led_mask = red_mask | green_mask | blue_mask
-    led_img = led_mask.astype("uint8") * 255
-
-    contours, _ = cv2.findContours(  #find contours again
-        led_img,
+    contours, _ = cv2.findContours(  #find contours
+        rotated,
         cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE
     )
